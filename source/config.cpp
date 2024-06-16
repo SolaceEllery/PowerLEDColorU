@@ -44,8 +44,8 @@ static void color_value_changed(ConfigItemIntegerRange* item, int32_t new_value)
         DEBUG_FUNCTION_LINE("color_value changed to: %d", new_value);
         Config::color_value = (uint8_t)new_value;
         SetNotificationLED((int8_t)Config::color_value);
-        if (WUPSStorageAPI::Store<uint32_t>("color_value", (uint32_t)Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS) {
-            DEBUG_FUNCTION_LINE("Failed to save \"color_value\" value (%d)", Config::color_value);
+        if (WUPSStorageAPI::Store<uint32_t>("color_value", (unsigned int&)Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS) {
+            DEBUG_FUNCTION_LINE("Failed to save \"color_value\" value (%d)", (uint32_t)Config::color_value);
         }
     }
 }
@@ -60,7 +60,7 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
     light_settings.add(WUPSConfigItemBoolean::Create("led_enabled", enable_led_light, true, Config::led_enabled, &led_enabled_changed));
 
     // Color value
-    light_settings.add(WUPSConfigItemIntegerRange::Create("color_value", color_to_use, (uint32_t)Config::color_value, (uint32_t)Config::color_value, (uint32_t)0x01, (uint32_t)0xFF, &color_value_changed));
+    light_settings.add(WUPSConfigItemIntegerRange::Create("color_value", color_to_use, (uint32_t)Config::color_value, (uint32_t)Config::color_value, 0x01, 0xFF, &color_value_changed));
 
     root.add(std::move(light_settings));
 
@@ -108,7 +108,7 @@ void Config::Init() {
     {
         DEBUG_FUNCTION_LINE("Detected no LED color setting, attempting to migrate/create...");
         // --LED Toggle--
-        if (WUPSStorageAPI::Store<uint32_t>("color_value", (uint8_t)Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS)
+        if (WUPSStorageAPI::Store<uint32_t>("color_value", (unsigned int&)Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS)
         {
             DEBUG_FUNCTION_LINE("Failed to store 'color_value' bool");
         }

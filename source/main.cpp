@@ -21,7 +21,7 @@ WUPS_PLUGIN_VERSION("v1.0");
 WUPS_PLUGIN_AUTHOR("SpencerlyEverly");
 WUPS_PLUGIN_LICENSE("MIT");
 
-WUPS_USE_STORAGE("powerLedColorU");
+WUPS_USE_STORAGE("PowerLEDColorU");
 
 INITIALIZE_PLUGIN() {
     // Init logging

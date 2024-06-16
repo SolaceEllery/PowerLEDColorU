@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-int SetNotificationLED(uint8_t mask);
+int SetNotificationLED(int8_t mask);
 
 enum {
     // No LED: LED Off

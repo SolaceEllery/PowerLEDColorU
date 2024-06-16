@@ -23,7 +23,7 @@ TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source source/utils
 DATA		:=	data
-INCLUDES	:=	source
+INCLUDES	:=	source source/utils
 
 #-------------------------------------------------------------------------------
 # options for code generation

@@ -8,7 +8,10 @@
 #include <whb/log_module.h>
 #include <whb/log_cafe.h>
 #include <whb/log_udp.h>
-#include <string.h>
+
+#include <string>
+#include <string_view>
+#include <cstdint>
 
 #include "config.h"
 
@@ -27,7 +30,6 @@ INITIALIZE_PLUGIN() {
         WHBLogUdpInit();
     }
 
-    ShowNotification("The PowerLEDColorU process has started!");
     Config::Init();
 }
 

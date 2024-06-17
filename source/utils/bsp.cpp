@@ -4,7 +4,7 @@
 
 #include "bsp.h"
 
-int SetNotificationLED(int8_t mask)
+int SetNotificationLED(uint8_t mask)
 {
     return bspWrite("SMC", 0, "NotificationLED", 1, &mask);
 }

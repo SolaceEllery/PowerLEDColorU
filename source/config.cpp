@@ -9,6 +9,9 @@
 #include <wups/config/WUPSConfigItemBoolean.h>
 #include <wups/config/WUPSConfigItemIntegerRange.h>
 
+#include <coreinit/title.h>
+#include <sysapp/title.h>
+
 #include <string>
 #include <cstdint>
 
@@ -30,7 +33,7 @@ static void led_enabled_changed(ConfigItemBoolean* item, bool new_value) {
     }
     else
     {
-        SetNotificationLED((int8_t)Config::color_value);
+        SetNotificationLED(Config::color_value);
     }
 
     if (WUPSStorageAPI::Store<bool>("led_enabled", Config::led_enabled) != WUPS_STORAGE_ERROR_SUCCESS) {
@@ -43,7 +46,7 @@ static void color_value_changed(ConfigItemIntegerRange* item, int32_t new_value)
     {
         DEBUG_FUNCTION_LINE("color_value changed to: %d", new_value);
         Config::color_value = (uint8_t)new_value;
-        SetNotificationLED((int8_t)Config::color_value);
+        SetNotificationLED(Config::color_value);
         if (WUPSStorageAPI::Store<uint32_t>("color_value", (unsigned int&)Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS) {
             DEBUG_FUNCTION_LINE("Failed to save \"color_value\" value (%d)", (uint32_t)Config::color_value);
         }
@@ -90,6 +93,7 @@ void Config::Init() {
     storageRes = WUPSStorageAPI::Get<bool>("led_enabled", Config::led_enabled);
     if (storageRes == WUPS_STORAGE_ERROR_NOT_FOUND)
     {
+        ShowNotification("PowerLEDColorU: No 'LED Enabled' value set, setting default setting (On)...");
         DEBUG_FUNCTION_LINE("Detected no LED Enable value, attempting to migrate/create...");
         // --LED Toggle--
         if (WUPSStorageAPI::Store<bool>("led_enabled", Config::led_enabled) != WUPS_STORAGE_ERROR_SUCCESS)
@@ -106,6 +110,7 @@ void Config::Init() {
     storageRes = WUPSStorageAPI::Get<uint32_t>("color_value", (unsigned int&)Config::color_value);
     if (storageRes == WUPS_STORAGE_ERROR_NOT_FOUND)
     {
+        ShowNotification("PowerLEDColorU: No 'Color' value set, setting default setting (Blue)...");
         DEBUG_FUNCTION_LINE("Detected no LED color setting, attempting to migrate/create...");
         // --LED Toggle--
         if (WUPSStorageAPI::Store<uint32_t>("color_value", (unsigned int&)Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS)

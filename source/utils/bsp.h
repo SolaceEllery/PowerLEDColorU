@@ -2,8 +2,9 @@
 #define LED_H
 
 #include <stdint.h>
+#include <coreinit/bsp.h>
 
-int SetNotificationLED(int8_t mask);
+int SetNotificationLED(uint8_t mask);
 
 enum {
     // No LED: LED Off

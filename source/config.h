@@ -10,7 +10,7 @@ public:
     static void Init();
 
     // wups config items
-    static uint8_t color_value;
+    static uint32_t color_value;
     static bool led_enabled;
 };
 

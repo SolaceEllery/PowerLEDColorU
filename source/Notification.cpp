@@ -1,4 +1,5 @@
 #include "Notification.h"
+
 #include <notifications/notification_defines.h>
 #include <notifications/notifications.h>
 

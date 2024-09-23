@@ -1,6 +1,6 @@
 /*
     PowerLEDColorU
-    Created by SpencerlyEverly
+    By Solace D. Ellery
 */
 
 #include <stdio.h>
@@ -30,18 +30,17 @@
 #include <cstdint>
 
 #include "config.h"
-#include "Notification.h"
 
-#define POWERLEDCOLORU_VERSION "v1.0.0"
+#include "Notification.h"
 
 /**
     Mandatory plugin information.
     If not set correctly, the loader will refuse to use the plugin.
 **/
 WUPS_PLUGIN_NAME("PowerLEDColorU");
-WUPS_PLUGIN_DESCRIPTION("Allows you to change the Wii U Power LED Color, toggle blinking, and even turn off the LED while the console is turned on");
-WUPS_PLUGIN_VERSION(POWERLEDCOLORU_VERSION);
-WUPS_PLUGIN_AUTHOR("SpencerlyEverly");
+WUPS_PLUGIN_DESCRIPTION("Allows you to change the Wii U's LED Color, located on the Power Button, while the console is turned on");
+WUPS_PLUGIN_VERSION("v1.0.0");
+WUPS_PLUGIN_AUTHOR("Solace D. Ellery");
 WUPS_PLUGIN_LICENSE("MIT");
 
 WUPS_USE_STORAGE("PowerLEDColorU");

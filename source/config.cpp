@@ -14,14 +14,13 @@
 
 #include <string>
 #include <cstdint>
+#include <vector>
 
 uint32_t Config::color_value = 0x20;
 bool Config::led_enabled = true;
 
-std::string plugin_name = "PowerLEDColorU";
-std::string light_settings_string = "Light Settings";
-std::string enable_led_light = "Enable LED Light";
-std::string color_to_use = "Color to use";
+std::vector<std::string> configOptionTitles = {"Light Settings"};
+std::vector<std::string> configOptionSections = {"Enable LED Light", "Color Choice"};
 
 static void led_enabled_changed(ConfigItemBoolean* item, bool new_value) {
     DEBUG_FUNCTION_LINE("led_enabled changed to: %d", new_value);
@@ -57,13 +56,13 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
 {
     // create root config category
     WUPSConfigCategory root = WUPSConfigCategory(rootHandle);
-    auto light_settings = WUPSConfigCategory::Create(light_settings_string);
+    auto light_settings = WUPSConfigCategory::Create(configOptionTitles[0]);
 
     // LED Enabled
-    light_settings.add(WUPSConfigItemBoolean::Create("led_enabled", enable_led_light, true, Config::led_enabled, &led_enabled_changed));
+    light_settings.add(WUPSConfigItemBoolean::Create("led_enabled", configOptionSections[0], true, Config::led_enabled, &led_enabled_changed));
 
     // Color value
-    light_settings.add(WUPSConfigItemIntegerRange::Create("color_value", color_to_use, Config::color_value, Config::color_value, 0x01, 0xFF, &color_value_changed));
+    light_settings.add(WUPSConfigItemIntegerRange::Create("color_value", configOptionSections[1], Config::color_value, Config::color_value, 0x01, 0xFF, &color_value_changed));
 
     root.add(std::move(light_settings));
 

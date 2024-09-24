@@ -1,4 +1,5 @@
 #include "config.h"
+#include "globals.h"
 
 #include "utils/logger.h"
 #include "utils/bsp.h"
@@ -16,70 +17,122 @@
 #include <cstdint>
 #include <vector>
 
-uint32_t Config::color_value = 0x20;
-bool Config::led_enabled = true;
-
-std::vector<std::string> configOptionTitles = {"Light Settings"};
-std::vector<std::string> configOptionSections = {"Enable LED Light", "Color Choice"};
-
-static void led_enabled_changed(ConfigItemBoolean* item, bool new_value) {
+// Function to change the LED status. Used when setting an option in the plugin menu
+static void PluginConfig_ToggleLED(ConfigItemBoolean* item, bool new_value)
+{
     DEBUG_FUNCTION_LINE("led_enabled changed to: %d", new_value);
-    Config::led_enabled = new_value;
+    GlobalVarsFuncs.PluginConfig_EnableLED = new_value;
 
-    if (!Config::led_enabled)
+    if (!GlobalVarsFuncs.PluginConfig_EnableLED)
     {
-        SetNotificationLED(0x00);
+        GlobalVarsFuncs.setPowerLEDState(0x00);
     }
     else
     {
-        SetNotificationLED(Config::color_value);
+        GlobalVarsFuncs.setPowerLEDState(GlobalVarsFuncs.PluginConfig_ColorValue);
     }
 
-    if (WUPSStorageAPI::Store<bool>("led_enabled", Config::led_enabled) != WUPS_STORAGE_ERROR_SUCCESS) {
-        DEBUG_FUNCTION_LINE("Failed to save \"led_enabled\" value (%d)", Config::led_enabled);
+    if (WUPSStorageAPI::Store<bool>("led_enabled", GlobalVarsFuncs.PluginConfig_EnableLED) != WUPS_STORAGE_ERROR_SUCCESS)
+    {
+        DEBUG_FUNCTION_LINE("Failed to save \"led_enabled\" value (%d)", GlobalVarsFuncs.PluginConfig_EnableLED);
     }
 }
 
-static void color_value_changed(ConfigItemIntegerRange* item, int32_t new_value) {
-    if (Config::led_enabled)
+// Function to change the LED color.
+static void PluginConfig_ChangeColor(ConfigItemIntegerRange* item, int32_t new_value) {
+    if (GlobalVarsFuncs.PluginConfig_EnableLED)
     {
         DEBUG_FUNCTION_LINE("color_value changed to: %d", new_value);
-        Config::color_value = (uint8_t)new_value;
-        SetNotificationLED(Config::color_value);
-        if (WUPSStorageAPI::Store<uint32_t>("color_value", Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS) {
-            DEBUG_FUNCTION_LINE("Failed to save \"color_value\" value (%d)", Config::color_value);
+        GlobalVarsFuncs.PluginConfig_ColorValue = (uint8_t)new_value;
+        GlobalVarsFuncs.setPowerLEDState(GlobalVarsFuncs.PluginConfig_ColorValue);
+        if (WUPSStorageAPI::Store<uint32_t>("color_value", GlobalVarsFuncs.PluginConfig_ColorValue) != WUPS_STORAGE_ERROR_SUCCESS)
+        {
+            DEBUG_FUNCTION_LINE("Failed to save \"color_value\" value (%d)", GlobalVarsFuncs.PluginConfig_ColorValue);
         }
     }
 }
 
+// Function to change the LED blinking status.
+static void PluginConfig_ToggleBlinking(ConfigItemBoolean* item, bool new_value)
+{
+    DEBUG_FUNCTION_LINE("is_blinking changed to: %d", new_value);
+    GlobalVarsFuncs.PluginConfig_IsBlinking = new_value;
+
+    if (!GlobalVarsFuncs.PluginConfig_IsBlinking)
+    {
+        
+    }
+    else
+    {
+        
+    }
+
+    if (WUPSStorageAPI::Store<bool>("is_blinking", GlobalVarsFuncs.PluginConfig_IsBlinking) != WUPS_STORAGE_ERROR_SUCCESS)
+    {
+        DEBUG_FUNCTION_LINE("Failed to save \"is_blinking\" value (%d)", GlobalVarsFuncs.PluginConfig_IsBlinking);
+    }
+}
+
+// Function to change the plugin status.
+static void PluginConfig_TogglePlugin(ConfigItemBoolean* item, bool new_value)
+{
+    DEBUG_FUNCTION_LINE("enabled changed to: %d", new_value);
+    GlobalVarsFuncs.PluginConfig_EnablePlugin = new_value;
+
+    if (WUPSStorageAPI::Store<bool>("enabled", GlobalVarsFuncs.PluginConfig_EnablePlugin) != WUPS_STORAGE_ERROR_SUCCESS)
+    {
+        DEBUG_FUNCTION_LINE("Failed to save \"enabled\" value (%d)", GlobalVarsFuncs.PluginConfig_EnablePlugin);
+    }
+}
+
+// The function that sets up the plugin's menus.
 static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHandle rootHandle)
 {
-    // create root config category
+    // Create the root config category
     WUPSConfigCategory root = WUPSConfigCategory(rootHandle);
-    auto light_settings = WUPSConfigCategory::Create(configOptionTitles[0]);
 
-    // LED Enabled
-    light_settings.add(WUPSConfigItemBoolean::Create("led_enabled", configOptionSections[0], true, Config::led_enabled, &led_enabled_changed));
+    // Add the options over to the root of the plugin's menu, and sections as empty text separators
 
-    // Color value
-    light_settings.add(WUPSConfigItemIntegerRange::Create("color_value", configOptionSections[1], Config::color_value, Config::color_value, 0x01, 0xFF, &color_value_changed));
+    // -- Enable Plugin --
+    root.add(WUPSConfigItemBoolean::Create("enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[3], true, GlobalVarsFuncs.PluginConfig_EnablePlugin, &PluginConfig_TogglePlugin));
 
-    root.add(std::move(light_settings));
+    // [-- LIGHT SETTINGS --]
+    root.add(WUPSConfigItemText::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
+    root.add(WUPSConfigItemText::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections));
+    root.add(WUPSConfigItemText::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
 
+    // -- Enable LED Light --
+    root.add(WUPSConfigItemBoolean::Create("led_enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[0], true, GlobalVarsFuncs.PluginConfig_EnableLED, &PluginConfig_ToggleLED));
+
+    // -- Color Choice --
+    root.add(WUPSConfigItemIntegerRange::Create("color_value", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[1], GlobalVarsFuncs.PluginConfig_ColorValue, GlobalVarsFuncs.PluginConfig_ColorValue, 0x01, 0xFF, &PluginConfig_ChangeColor));
+
+    // -- Enable Blinking --
+    root.add(WUPSConfigItemBoolean::Create("is_blinking", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[2], false, GlobalVarsFuncs.PluginConfig_IsBlinking, &PluginConfig_ToggleBlinking));
+
+    // Return with a result of success
     return WUPSCONFIG_API_CALLBACK_RESULT_SUCCESS;
 }
 
-static void ConfigMenuClosedCallback() {
+// This function runs when the plugin menu is closing.
+static void ConfigMenuClosedCallback()
+{
     // Save all changes
-    if (WUPSStorageAPI::SaveStorage() != WUPS_STORAGE_ERROR_SUCCESS) {
+    if (WUPSStorageAPI::SaveStorage() != WUPS_STORAGE_ERROR_SUCCESS)
+    {
         DEBUG_FUNCTION_LINE("Failed to save storage");
     }
 }
 
-void Config::Init() {
-    // Init the config api
-    WUPSConfigAPIOptionsV1 configOptions = { .name = "PowerLEDColorU" };
-    if (WUPSConfigAPI_Init(configOptions, ConfigMenuOpenedCallback, ConfigMenuClosedCallback) != WUPSCONFIG_API_RESULT_SUCCESS) {
+// The main function that sets up all the config stuff.
+void Config::Init()
+{
+    // Initalize the Config API
+    WUPSConfigAPIOptionsV1 configOptions = {.name = GlobalVarsFuncs.PluginName.c_str()};
+
+    // Make sure it didn't fail to initalize
+    if (WUPSConfigAPI_Init(configOptions, ConfigMenuOpenedCallback, ConfigMenuClosedCallback) != WUPSCONFIG_API_RESULT_SUCCESS)
+    {
         DEBUG_FUNCTION_LINE("Failed to initialize WUPS Config API");
         return;
     }
@@ -89,13 +142,13 @@ void Config::Init() {
     // Try to get values from storage, and if anything is missing, add the values to the storage config
 
     // LED Enabled
-    storageRes = WUPSStorageAPI::Get<bool>("led_enabled", Config::led_enabled);
+    storageRes = WUPSStorageAPI::Get<bool>("led_enabled", GlobalVarsFuncs.PluginConfig_EnableLED);
     if (storageRes == WUPS_STORAGE_ERROR_NOT_FOUND)
     {
-        ShowNotification("PowerLEDColorU: No 'LED Enabled' value set, setting default setting (On)...");
+        ShowNotification(GlobalVarsFuncs.PluginName + ": No 'LED Enabled' value set, setting default setting (On)...");
         DEBUG_FUNCTION_LINE("Detected no LED Enable value, attempting to migrate/create...");
         // --LED Toggle--
-        if (WUPSStorageAPI::Store<bool>("led_enabled", Config::led_enabled) != WUPS_STORAGE_ERROR_SUCCESS)
+        if (WUPSStorageAPI::Store<bool>("led_enabled", GlobalVarsFuncs.PluginConfig_EnableLED) != WUPS_STORAGE_ERROR_SUCCESS)
         {
             DEBUG_FUNCTION_LINE("Failed to store 'led enable' bool");
         }
@@ -106,13 +159,13 @@ void Config::Init() {
     }
 
     // Color Value
-    storageRes = WUPSStorageAPI::Get<uint32_t>("color_value", Config::color_value);
+    storageRes = WUPSStorageAPI::Get<uint32_t>("color_value", GlobalVarsFuncs.PluginConfig_ColorValue);
     if (storageRes == WUPS_STORAGE_ERROR_NOT_FOUND)
     {
-        ShowNotification("PowerLEDColorU: No 'Color' value set, setting default setting (Blue)...");
+        ShowNotification(GlobalVarsFuncs.PluginName + ": No 'Color' value set, setting default setting (Blue)...");
         DEBUG_FUNCTION_LINE("Detected no LED color setting, attempting to migrate/create...");
         // --LED Toggle--
-        if (WUPSStorageAPI::Store<uint32_t>("color_value", Config::color_value) != WUPS_STORAGE_ERROR_SUCCESS)
+        if (WUPSStorageAPI::Store<uint32_t>("color_value", GlobalVarsFuncs.PluginConfig_ColorValue) != WUPS_STORAGE_ERROR_SUCCESS)
         {
             DEBUG_FUNCTION_LINE("Failed to store 'color_value' bool");
         }

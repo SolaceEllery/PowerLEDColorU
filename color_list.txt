@@ -1,52 +1,55 @@
-0: **No LED**
-1: Yellow-B
-2: Yellow-NB
-3: 
-4: Red-B
-5: Orange-B
-6: 
-7: 
-8: Red-NB
-9: 
-10: Orange-NB
-11: 
-12: 
-13: 
-14: 
-15: 
-16: Blue-B
-17: Gray-B
-18: 
-19: 
-20: Purple-B
-21: 
-22: 
-23: 
-24: 
-25: 
-26: 
-27: 
-28: 
-29: 
-30: 
-31: 
-32: Blue-NB
-33: 
-34: Gray-NB
-35: 
-36: 
-37: 
-38: 
-39: 
-40: Purple-NB
-41: 
-42: 
-43: 
-44: 
-45: 
-46: 
-47: 
-48: 
+00/00 - **No LED**
+01/01 - Yellow-B
+02/02 - Yellow-NB
+03/03 - 
+04/04 - Red-B
+05/05 - Orange-B
+06/06 - 
+07/07 - 
+08/08 - Red-NB
+09/09 - 
+10/0A - Orange-NB
+11/0B - 
+12/0C - 
+13/0D - 
+14/0E - 
+15/0F - 
+16/10 - Blue-B
+17/11 - Gray(?)-B
+18/12 - 
+19/13 - 
+20/14 - Purple-B
+21/15 - 
+22/16 - 
+23/17 - 
+24/18 - 
+25/19 - 
+26/1A - 
+27/1B - 
+28/1C - 
+29/1D - 
+30/1E - 
+31/1F - 
+32/20 - Blue-NB
+33/21 - 
+34/22 - Gray-NB
+35/23 - 
+36/24 - 
+37/25 - 
+38/26 - 
+39/27 - 
+40/28 - Purple-NB
+41/29 - 
+42/2A - 
+43/2B - 
+44/2C - 
+45/2D - 
+46/2E - 
+47/2F - 
+48/30 - 
+...
 
 B = Blinks
 NB = Doesn't Blink
+
+(List is unfinished until enough data is gathered to finish it)

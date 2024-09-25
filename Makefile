@@ -65,7 +65,7 @@ ifeq ($(DEBUG),VERBOSE)
     CFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
 endif
 
-LIBS	:= -lwut -lwups -lwums -lnotifications -lmocha
+LIBS	:= -lwut -lwups -lnotifications -lmocha
 
 #-------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level

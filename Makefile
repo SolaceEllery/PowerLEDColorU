@@ -11,6 +11,8 @@ TOPDIR ?= $(CURDIR)
 include $(DEVKITPRO)/wups/share/wups_rules
 
 WUT_ROOT := $(DEVKITPRO)/wut
+WUMS_ROOT := $(DEVKITPRO)/wums
+
 #-------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -47,7 +49,7 @@ CXXFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
 CFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
 endif
 
-LIBS	:= -lwups -lwut -lnotifications -lmocha
+LIBS	:= -lwups -lwut -lwums -lnotifications -lmocha
 
 #-------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level

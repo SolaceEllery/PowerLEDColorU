@@ -2,15 +2,24 @@
 .SUFFIXES:
 #-------------------------------------------------------------------------------
 
+ifeq ($(strip $(DEVKITPPC)),)
+    $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>devkitPPC")
+endif
 ifeq ($(strip $(DEVKITPRO)),)
-$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
+    $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
 endif
 
 TOPDIR ?= $(CURDIR)
 
+export PATH		:=	$(DEVKITPPC)/bin:$(PORTLIBS)/bin:$(PATH)
+export PORTLIBS :=	$(DEVKITPRO)/portlibs/ppc
+export GCC_VER  :=  $(shell $(DEVKITPPC)/bin/powerpc-eabi-gcc -dumpversion)
+
 include $(DEVKITPRO)/wups/share/wups_rules
 
 WUT_ROOT := $(DEVKITPRO)/wut
+WUMS_ROOT := $(DEVKITPRO)/wums
+
 #-------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -18,19 +27,28 @@ WUT_ROOT := $(DEVKITPRO)/wut
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
 #-------------------------------------------------------------------------------
+
 TARGET		:=	PowerLEDColorU
 BUILD		:=	build
-SOURCES		:=	source source/utils
+SOURCES		:=	source
 DATA		:=	data
-INCLUDES	:=	source source/utils
+INCLUDES	:=	source
 
 #-------------------------------------------------------------------------------
 # options for code generation
 #-------------------------------------------------------------------------------
+
+# -Os: optimise size
+# -D__wiiu__: define the symbol __wiiu__ (used in some headers)
+# -ffunction-sections: split up functions so linker can garbage collect
+# -fdata-sections: split up data so linker can garbage collect
+
+COMMON_CFLAGS	:= -Os -D__WIIU__ -ffunction-sections -fdata-sections -Wl,-q  $(COMMON_CFLAGS)
+
 CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 			$(MACHDEP)
 
-CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__
+CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__ -D__WUMS__
 
 CXXFLAGS	:= $(CFLAGS)
 
@@ -38,21 +56,22 @@ ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-g $(ARCH) $(RPXSPECS) -Wl,-Map,$(notdir $*.map) $(WUPSSPECS) 
 
 ifeq ($(DEBUG),1)
-CXXFLAGS += -DDEBUG -g
-CFLAGS += -DDEBUG -g
+    CXXFLAGS += -DDEBUG -g
+    CFLAGS += -DDEBUG -g
 endif
 
 ifeq ($(DEBUG),VERBOSE)
-CXXFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
-CFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
+    CXXFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
+    CFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
 endif
 
-LIBS	:= -lwups -lwut -lnotifications -lmocha
+LIBS	:= -lwut -lwups -lwums -lnotifications -lmocha
 
 #-------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level
 # containing include and lib
 #-------------------------------------------------------------------------------
+
 LIBDIRS	:= $(PORTLIBS) $(WUPS_ROOT) $(WUT_ROOT) $(WUMS_ROOT)
 
 #-------------------------------------------------------------------------------

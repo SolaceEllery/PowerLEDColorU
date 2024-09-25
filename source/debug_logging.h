@@ -1,11 +1,7 @@
-#pragma once
-
+// Log-related macros. These usually are used for debugging purposes
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <string.h>
-#include <whb/log.h>
 
 #define __FILENAME_X__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #define __FILENAME__   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILENAME_X__)

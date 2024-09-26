@@ -137,33 +137,36 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
     // Create the root config category
     WUPSConfigCategory root = WUPSConfigCategory(rootHandle);
 
+    // Create a new category
+    auto section1 = WUPSConfigCategory::Create("Menu");
+
     // Add the options over to the root of the plugin's menu, and sections as empty text separators
 
     // -- Enable Plugin --
-    root.add(WUPSConfigItemBoolean::Create("enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[3], true, GlobalVarsFuncs.PluginConfigSettings_EnablePlugin, &PluginConfigFunctions_TogglePlugin));
+    section1.add(WUPSConfigItemBoolean::Create("enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[3], true, GlobalVarsFuncs.PluginConfigSettings_EnablePlugin, &PluginConfigFunctions_TogglePlugin));
 
     // --------
 
     // [-- LED SETTINGS --]
-    //root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections[0]));
-    //root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
+    //section1.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections[0]));
+    //section1.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
 
     // -- Enable LED Light --
-    root.add(WUPSConfigItemBoolean::Create("led_enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[0], true, GlobalVarsFuncs.PluginConfigSettings_EnableLED, &PluginConfigFunctions_ToggleLED));
+    section1.add(WUPSConfigItemBoolean::Create("led_enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[0], true, GlobalVarsFuncs.PluginConfigSettings_EnableLED, &PluginConfigFunctions_ToggleLED));
 
     // -- Enable LED Blinking --
-    root.add(WUPSConfigItemBoolean::Create("is_blinking", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[2], false, GlobalVarsFuncs.PluginConfigSettings_IsBlinking, &PluginConfigFunctions_ToggleBlinking));
+    section1.add(WUPSConfigItemBoolean::Create("is_blinking", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[2], false, GlobalVarsFuncs.PluginConfigSettings_IsBlinking, &PluginConfigFunctions_ToggleBlinking));
 
     // -- LED Color --
-    root.add(WUPSConfigItemIntegerRange::Create("color_value", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[1], GlobalVarsFuncs.PluginConfigSettings_ColorValue, GlobalVarsFuncs.PluginConfigSettings_ColorValue, 0x01, 0xFF, &PluginConfigFunctions_ChangeColor));
+    section1.add(WUPSConfigItemIntegerRange::Create("color_value", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[1], GlobalVarsFuncs.PluginConfigSettings_ColorValue, GlobalVarsFuncs.PluginConfigSettings_ColorValue, 0x01, 0xFF, &PluginConfigFunctions_ChangeColor));
 
     // [-- DEBUG SETTINGS --]
-    /*root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
-    root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections[1]));
-    root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
+    /*section1.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
+    section1.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections[1]));
+    section1.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
 
     // -- Enable Debug Overlay --
-    root.add(WUPSConfigItemBoolean::Create("debug_overlay_enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[4], false, GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay, &PluginConfigFunctions_ToggleDebugOverlay));*/
+    section1.add(WUPSConfigItemBoolean::Create("debug_overlay_enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[4], false, GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay, &PluginConfigFunctions_ToggleDebugOverlay));*/
 
     // Return with a result of success
     return WUPSCONFIG_API_CALLBACK_RESULT_SUCCESS;

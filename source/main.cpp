@@ -145,20 +145,23 @@ ON_APPLICATION_ENDS()
 }
 
 // Runs on every frame while the plugin is running.
-/*
-ON_VSYNC()
+int main()
 {
-    if(GlobalVarsFuncs.PluginConfig_PluginStarted)
+    // Run anything at anytime while the plugin is officially active
+    while(true)
     {
-        if(GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay && !debugOverlayOpened)
+        // Runs stuff only if the plugin is officially started and beyond
+        if(GlobalVarsFuncs.PluginConfig_PluginStarted)
         {
-            WUPS_OpenOverlay(WUPS_OVERLAY_DRC_AND_TV, Overlay_Debug_Stats, NULL);
-            debugOverlayOpened = true;
-        }
-        else if(((!GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay && debugOverlayOpened) || (!GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay)))
-        {
-            debugOverlayOpened = false;
+            /*if(GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay && !debugOverlayOpened)
+            {
+                WUPS_OpenOverlay(WUPS_OVERLAY_DRC_AND_TV, Overlay_Debug_Stats, NULL);
+                debugOverlayOpened = true;
+            }
+            else if(((!GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay && debugOverlayOpened) || (!GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay)))
+            {
+                debugOverlayOpened = false;
+            }*/
         }
     }
 }
-*/

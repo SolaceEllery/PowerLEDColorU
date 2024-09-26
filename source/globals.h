@@ -126,16 +126,29 @@ struct Global
     }
 
     // Retrieves the Power LED state
-    int32_t getPowerLEDState()
+    int getPowerLEDState()
     {
-        return bspRead("SMC", 1, "NotificationLED", 1, NULL);
+        uint8_t powerLEDState;
+        int32_t error = bspRead("SMC", 0, "NotificationLED", 1, &powerLEDState);
+        if(error >= 1)
+        {
+            return -1;
+        }
+
+        return (int)powerLEDState;
     }
 
     // This sets the Power LED state, by writing a value over to the BSP in the console.
-    int32_t setPowerLEDState(uint8_t stateValue)
+    int setPowerLEDState(uint8_t stateValue)
     {
         // This one function should do everything for us on this program
-        return bspWrite("SMC", 0, "NotificationLED", 1, &stateValue);
+        int32_t error = bspWrite("SMC", 0, "NotificationLED", 1, &stateValue);
+        if(error >= 1)
+        {
+            return 1;
+        }
+
+        return 0;
     }
 
     // Shows a notification on the Wii U's screens, on the top-left corner

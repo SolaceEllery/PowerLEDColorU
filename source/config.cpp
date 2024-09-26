@@ -145,8 +145,8 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
     // --------
 
     // [-- LED SETTINGS --]
-    root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections[0]));
-    root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
+    //root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSections[0]));
+    //root.add(WUPSConfigItemStub::Create(GlobalVarsFuncs.PluginConfigStrings_MenuSeparator));
 
     // -- Enable LED Light --
     root.add(WUPSConfigItemBoolean::Create("led_enabled", GlobalVarsFuncs.PluginConfigStrings_MenuOptions[0], true, GlobalVarsFuncs.PluginConfigSettings_EnableLED, &PluginConfigFunctions_ToggleLED));
@@ -218,7 +218,7 @@ void Config::Init()
         // Store the default value to the plugin config, else error out
         if (WUPSStorageAPI::Store<bool>("enabled", GlobalVarsFuncs.PluginConfigDefaults_EnablePlugin) != WUPS_STORAGE_ERROR_SUCCESS)
         {
-            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'enabled' config value (Value that was specified - '%d')");
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'enabled' config value (Value that was specified - '%d')", GlobalVarsFuncs.PluginConfigSettings_EnablePlugin);
         }
     }
 
@@ -245,7 +245,7 @@ void Config::Init()
         // Store the default value to the plugin config, else error out
         if (WUPSStorageAPI::Store<bool>("led_enabled", GlobalVarsFuncs.PluginConfigDefaults_EnableLED) != WUPS_STORAGE_ERROR_SUCCESS)
         {
-            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'led_enabled' config value (Value that was specified - '%d')");
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'led_enabled' config value (Value that was specified - '%d')", GlobalVarsFuncs.PluginConfigSettings_EnableLED);
         }
     }
 
@@ -274,7 +274,7 @@ void Config::Init()
         // Store the default value to the plugin config, else error out
         if (WUPSStorageAPI::Store<uint32_t>("color_value", GlobalVarsFuncs.PluginConfigDefaults_ColorValue) != WUPS_STORAGE_ERROR_SUCCESS)
         {
-            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'color_value' config value (Value that was specified - '%d')");
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'color_value' config value (Value that was specified - '%d')", GlobalVarsFuncs.PluginConfigSettings_ColorValue);
         }
     }
 
@@ -301,7 +301,7 @@ void Config::Init()
         // Store the default value to the plugin config, else error out
         if (WUPSStorageAPI::Store<bool>("is_blinking", GlobalVarsFuncs.PluginConfigDefaults_IsBlinking) != WUPS_STORAGE_ERROR_SUCCESS)
         {
-            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'is_blinking' config value (Value that was specified - '%d')");
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'is_blinking' config value (Value that was specified - '%d')", GlobalVarsFuncs.PluginConfigSettings_IsBlinking);
         }
     }
 
@@ -330,7 +330,7 @@ void Config::Init()
         // Store the default value to the plugin config, else error out
         if (WUPSStorageAPI::Store<bool>("debug_overlay_enabled", GlobalVarsFuncs.PluginConfigDefaults_EnableDebugOverlay) != WUPS_STORAGE_ERROR_SUCCESS)
         {
-            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'debug_overlay_enabled' config value (Value that was specified - '%d')");
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save the 'debug_overlay_enabled' config value (Value that was specified - '%d')", GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay);
         }
     }
 

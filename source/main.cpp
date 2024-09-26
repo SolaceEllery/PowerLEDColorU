@@ -86,9 +86,6 @@ INITIALIZE_PLUGIN()
         WHBLogUdpInit();
     }
 
-    // Start the config
-    Config::Init();
-
     // Start Mocha
     auto res = Mocha_InitLibrary();
 
@@ -99,13 +96,13 @@ INITIALIZE_PLUGIN()
         return;
     }
 
-    // Initalize the BSP system
-    bspInitializeShimInterface();
-
     // If the Notification module fails, keep going, but mark that it failed
     if (NotificationModule_InitLibrary() != NOTIFICATION_MODULE_RESULT_SUCCESS) {
         DEBUG_FUNCTION_LINE("NotificationModule_InitLibrary failed");
     }
+
+    // Initalize the config
+    Config::Init();
 
     // Notify that the plugin has officially started and is active, if on the Wii U menu
     if (GlobalVarsFuncs.isOnWiiUMenu())

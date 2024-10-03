@@ -3,6 +3,8 @@
 
 #include "plugin_includes.h"
 
+#include "debug_logging.h"
+
 struct Global
 {
     // Plugin Globals: Name
@@ -42,8 +44,9 @@ struct Global
     bool PluginConfigDefaults_EnablePlugin;
     bool PluginConfigDefaults_EnableLED;
 
-    uint32_t PluginConfigDefaults_ColorValue;
+    int32_t PluginConfigDefaults_ColorValue;
     bool PluginConfigDefaults_IsBlinking;
+    int32_t PluginConfigDefaults_BlinkRate;
 
     bool PluginConfigDefaults_EnableDebugOverlay;
 
@@ -52,14 +55,26 @@ struct Global
     bool PluginConfigSettings_EnablePlugin;
     bool PluginConfigSettings_EnableLED;
 
-    uint32_t PluginConfigSettings_ColorValue;
+    int32_t PluginConfigSettings_ColorValue;
     bool PluginConfigSettings_IsBlinking;
+    int32_t PluginConfigSettings_BlinkRate;
 
     bool PluginConfigSettings_EnableDebugOverlay;
-    
+
 
     // --------
-    
+
+    // Plugin Globals: Option Handles
+    WUPSConfigItemHandle PluginConfigHandles_EnablePlugin;
+    WUPSConfigItemHandle PluginConfigHandles_EnableLED;
+
+    WUPSConfigItemHandle PluginConfigHandles_ColorValue;
+    WUPSConfigItemHandle PluginConfigHandles_IsBlinking;
+
+    WUPSConfigItemHandle PluginConfigHandles_EnableDebugOverlay;
+
+    // --------
+
     Global()
     {
         Reset();
@@ -100,6 +115,7 @@ struct Global
 
         PluginConfigDefaults_ColorValue = 0x20;
         PluginConfigDefaults_IsBlinking = false;
+        PluginConfigDefaults_BlinkRate = 60;
 
         PluginConfigDefaults_EnableDebugOverlay = false;
 
@@ -110,6 +126,7 @@ struct Global
 
         PluginConfigSettings_ColorValue = 0x20;
         PluginConfigSettings_IsBlinking = false;
+        PluginConfigSettings_BlinkRate = 60;
 
         PluginConfigSettings_EnableDebugOverlay = false;
 
@@ -128,8 +145,10 @@ struct Global
     // Retrieves the Power LED state
     int getPowerLEDState()
     {
-        uint8_t powerLEDState;
+        int8_t powerLEDState;
+
         int32_t error = bspRead("SMC", 0, "NotificationLED", 1, &powerLEDState);
+
         if(error >= 1)
         {
             return -1;
@@ -143,6 +162,7 @@ struct Global
     {
         // This one function should do everything for us on this program
         int32_t error = bspWrite("SMC", 0, "NotificationLED", 1, &stateValue);
+
         if(error >= 1)
         {
             return 1;
@@ -166,6 +186,7 @@ struct Global
         NotificationModule_AddInfoNotification(notification.data());
     }
 
+    // Basically a string. "true" is "On", "false" is "Off"
     std::string booleanToSwitchIndicator(bool value)
     {
         if(value)
@@ -178,6 +199,7 @@ struct Global
         }
     }
 
+    // Basically a string. "true" is "Yes", "false" is "No"
     std::string booleanToAnswerIndicator(bool value)
     {
         if(value)
@@ -187,6 +209,93 @@ struct Global
         else
         {
             return "No";
+        }
+    }
+
+    void changeConfigValue(bool configItem, bool newValue, std::string rawVariableString)
+    {
+        // Log the change
+        DEBUG_FUNCTION_LINE("PowerLEDColorU: Setting config value into config file... (Value: '%d')", newValue);
+
+        // Change the variable
+        configItem = newValue;
+
+        // Store the new setting, unless an error occurs
+        if (WUPSStorageAPI::Store<bool>(rawVariableString.c_str(), newValue) != WUPS_STORAGE_ERROR_SUCCESS)
+        {
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save a config value to the config file (Value that was specified - '%d')", newValue);
+        }
+    }
+
+    void changeConfigValue(int32_t configItem, int32_t newValue, std::string rawVariableString)
+    {
+        // Log the change
+        DEBUG_FUNCTION_LINE("PowerLEDColorU: Setting config value into config file... (Value: '%d')", newValue);
+
+        // Change the variable
+        configItem = newValue;
+
+        // Store the new setting, unless an error occurs
+        if (WUPSStorageAPI::Store<int32_t>(rawVariableString.c_str(), newValue) != WUPS_STORAGE_ERROR_SUCCESS)
+        {
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: Failed to save a config value to the config file (Value that was specified - '%d')", newValue);
+        }
+    }
+
+    // Runs when initating a config variable
+    void readConfig_firstRead_Bool(bool var, bool defaultVar, std::string configName, std::string defaultSettingName, std::string rawVariableString)
+    {
+        // Create "storageRes"
+        WUPSStorageError storageRes;
+
+        // Get the value from the config file
+        storageRes = WUPSStorageAPI::Get<bool>(rawVariableString, var);
+
+        // If there is nothing, create the config value with the default settings
+        if (storageRes == WUPS_STORAGE_ERROR_NOT_FOUND)
+        {
+            // Store the default value to the main variable
+            var = defaultVar;
+
+            // Store the default value to the plugin config, else error out
+            if (WUPSStorageAPI::Store<bool>(rawVariableString, defaultVar) != WUPS_STORAGE_ERROR_SUCCESS)
+            {
+                DEBUG_FUNCTION_LINE("PowerLEDColorU: Failed to save a config value to the config file (Value that was specified - '%d')", var);
+            }
+        }
+
+        // If nothing still works, we couldn't read where the config should be at
+        else if (storageRes != WUPS_STORAGE_ERROR_SUCCESS)
+        {
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save to the config file (Status: '%s', Error: '%d')", WUPSStorageAPI_GetStatusStr(storageRes), storageRes);
+        }
+    }
+
+    void readConfig_firstRead_Int32(int32_t var, int32_t defaultVar, std::string configName, std::string defaultSettingName, std::string rawVariableString)
+    {
+        // Create "storageRes"
+        WUPSStorageError storageRes;
+
+        // Get the value from the config file
+        storageRes = WUPSStorageAPI::Get<int32_t>(rawVariableString, var);
+
+        // If there is nothing, create the config value with the default settings
+        if (storageRes == WUPS_STORAGE_ERROR_NOT_FOUND)
+        {
+            // Store the default value to the main variable
+            var = defaultVar;
+
+            // Store the default value to the plugin config, else error out
+            if (WUPSStorageAPI::Store<int32_t>(rawVariableString, defaultVar) != WUPS_STORAGE_ERROR_SUCCESS)
+            {
+                DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save a config value to the config file (Value that was specified - '%d')", var);
+            }
+        }
+
+        // If nothing still works, we couldn't read where the config should be at
+        else if (storageRes != WUPS_STORAGE_ERROR_SUCCESS)
+        {
+            DEBUG_FUNCTION_LINE("PowerLEDColorU: ERROR - Failed to save to the config file (Status: '%s', Error: '%d')", WUPSStorageAPI_GetStatusStr(storageRes), storageRes);
         }
     }
 };

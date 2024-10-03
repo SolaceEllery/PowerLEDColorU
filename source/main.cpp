@@ -148,11 +148,19 @@ ON_APPLICATION_ENDS()
 int main()
 {
     // Run anything at anytime while the plugin is officially active
-    while(true)
+    while(1)
     {
         // Runs stuff only if the plugin is officially started and beyond
-        if(GlobalVarsFuncs.PluginConfig_PluginStarted)
+        if(GlobalVarsFuncs.PluginConfigSettings_EnablePlugin && GlobalVarsFuncs.PluginConfig_PluginStarted)
         {
+            if(GlobalVarsFuncs.PluginConfigSettings_IsBlinking)
+            {
+                
+            }
+            else
+            {
+                
+            }
             /*if(GlobalVarsFuncs.PluginConfigSettings_EnableDebugOverlay && !debugOverlayOpened)
             {
                 WUPS_OpenOverlay(WUPS_OVERLAY_DRC_AND_TV, Overlay_Debug_Stats, NULL);

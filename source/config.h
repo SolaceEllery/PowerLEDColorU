@@ -9,13 +9,13 @@ public:
     static void Init();
 
     // wups config items
-    static bool enabled;
-    static bool led_enabled;
+    static bool EnablePlugin;
+    static bool EnableLED;
 
-    static uint32_t color_value;
-    static bool is_blinking;
+    static int32_t ColorValue;
+    static bool IsBlinking;
 
-    static bool debug_overlay_enabled;
+    static bool EnableDebugOverlay;
 };
 
 #endif //LEDCOLORU_CONFIG_H

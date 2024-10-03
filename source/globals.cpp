@@ -14,8 +14,6 @@ void Globals_Startup()
 
     // Set all previously-unset variables
 
-
-
     // --------
 
     // -- Plugin Version ("X.X.X") --
